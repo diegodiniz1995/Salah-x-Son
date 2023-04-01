@@ -10,7 +10,7 @@ Original file is located at
 
 Estudo criado para comparar as estatíscas de Son e Salah, na temporada de 21/22
 
-GLOSSÁRIO 
+GLOSSÁRIO
 
 A:assistências
 
@@ -35,25 +35,23 @@ F:Finalizações
 ##Mohamed Salah
 """
 
+#importando bibliotecas
 import pandas as pd
-  import seaborn as sns
+import seaborn as sns
 
+#informando URL do site com as estatíscas do Salah
 data1 = pd.read_html('https://www.espn.com.br/futebol/jogador/jogos/_/id/173896/time/364/tipo/eng.1/ano/2021')
 data1
 
+#Transformando a lista em Data Frame
 salah = data1[0]
 salah.head()
 
+#Renomeando as colunas
 salah.rename(columns = {'Date' : 'Data', 'TC' : 'F'}, inplace = True)
 
+#Visualizando a Edição
 salah.head()
-
-print('O máximo de gols em uma partida foi de', salah.G.max())
-
-print('Total de',salah.shape[0], 'jogos')
-
-salah['PG'] = (salah['G'] / salah['FS']).round(2)
-salah
 
 """##Son Heung-Min"""
 
@@ -63,14 +61,36 @@ data2
 son = data2[0]
 son.head()
 
+son.rename(columns = {'Date' : 'Data', 'TC' : 'F'}, inplace = True)
+son.head()
+
 """##Salah x Son
 
 """
 
-salah['CG'].sum()
+#Analisando a máximo de gols que cada jogador fez na partida
+max_salah =salah['G'].max()
+max_son = son['G'].max()
+print(f'O máximo de gols em uma partida que o Salah fez na temporada foi {max_salah}, e o máximo do Son foi {max_son}')
 
-son['CG'].sum()t
+#Analisando a quantidade de chances de gols que cada jogador teve na temporada
+chances_salah = salah['CG'].sum()
+chances_son = son['CG'].sum()
+print(f'A quantidade de chances de gol que cada jogador teve foi de {chances_salah} para o Salah e de {chances_son} para o Son, nesse quesito podemos ver uma pequena vantagem para o son que precisou de menos chances para arrematar')
 
-ax = sns.relplot(x='G', y = 'FS', kind = 'line', data = salah)
-ax = sns.relplot(x='G', y = 'FS', kind = 'line', data = son)
+#Plotando a quantidade de jogos que cada jogador teve
+print('O total de jogos do Salah foi de ', salah.shape[0], ' e o total do Son foi de', son.shape[0],' os dois perderam apenas 3 partidas de um total de 35 jogos')
+
+#Neste exemplo específico utilizamos a correlação. Através desta análise, podemos notar que o jogador Salah apresenta uma correlação moderada entre o número de gols marcados e as finalizações realizadas durante as partidas. Isso indica que Salah é um jogador que necessita de várias finalizações para marcar gols. Comparando essa métrica com a do jogador Son, percebemos que ele apresenta uma correlação fraca. Isso significa que, durante a temporada, o número de finalizações que ele teve durante as partidas não foi um fator determinante para o seu desempenho."
+
+correlacao_salah = salah['G'].corr(salah['F'])
+correlacao_son = son['G'].corr(son['F'])
+print(f'A correlação de gols e finalizações mostrou que o Salah precisa necessariamente de mais finalizações para balançar as redes,\nSalah correlação = {correlacao_salah:.2f} \nSon correlação {correlacao_son:.2f}')
+
+#Adicionando Gráficos para analisar a quantidade de gols x finalizações sofridas por cada jogador, para facilitar a entendimento da correlação
+ax1 = sns.relplot(x='G', y = 'F', kind = 'line', data = salah)
+ax2 = sns.relplot(x='G', y = 'F', kind = 'line', data = son)
+# Adicionar títulos aos gráficos
+ax1.set(title='Desempenho de Salah', xlabel="Gols", ylabel="Finalizações")
+ax2.set(title='Desempenho de Son', xlabel="Gols", ylabel="finalizações")
 
